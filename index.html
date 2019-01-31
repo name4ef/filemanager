@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang='en'>
+	<head>
+		<meta charset='utf-8'>
+		<meta name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no'>
+		<script type='text/javascript' src='js/vue.js'></script>
+		<script type='text/javascript' src='js/moment.js'></script>
+		<script type='text/javascript' src='js/axios.min.js'></script>
+		<link rel='stylesheet' href='css/bootstrap.css' />
+		<link rel='stylesheet' href='css/style.css' />
+	</head>
+	<body>
+		<div class="container-fluid">
+			<div class="row justify-content-center align-items-center">
+				<div class="col-9">
+					<div id='filemanager' class='border'>
+						<table class='table table-borderless'>
+							<thead class='thead'>
+								<tr>
+									<th>Name</th>
+                                    <th class='d-none d-lg-table-cell'>Size</th>
+									<th class='d-none d-xl-table-cell'>Modify time</th>
+									<th></th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr v-for="f in files">
+									<td v-if='f.type == "text"'
+                                        v-on:click='viewContent(f)'
+                                        class='table-info'>
+										{{ f.name }}
+									</td>
+									<td v-else-if='f.type == "image"'
+                                        v-on:click='viewContent(f)'
+                                        class='table-warning'>
+										{{ f.name }}
+									</td>
+									<td v-else>{{ f.name }}</td>
+                                    <td class='d-none d-lg-table-cell'>
+                                        {{ f.size | formatSize }}
+                                    </td>
+									<td class='d-none d-xl-table-cell'>
+                                        {{ f.mtime | formatDate }}
+                                    </td>
+									<td>
+										<input type='button' value='X'
+                                        v-on:click='confirm(f.name)'
+                                        class='btn btn-sm btn-outline-danger'/>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<div class="input-group">
+							<div class="input-group-prepend">
+                                <button class='btn'
+                                    v-bind:class='classObject'
+                                    v-bind:disabled='uploadButtonIsDisabled'
+                                    v-on:click='submitFile'>
+                                    Upload
+                                </button>
+							</div>
+							<div class="custom-file">
+								<input type="file" v-on:change='onFileChange'
+                                class="custom-file-input"/>
+                                <label class="custom-file-label">
+                                    {{ selectedFileName }}
+                                </label>
+							</div>
+						</div>
+						<modal v-if='modal.show'
+                        v-on:close='modal.show = false'
+                        v-on:confirm='removeFile(modal.content.data); modal.show = false'
+                        v-bind='modal'></modal>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script type='text/javascript' src='js/app.js'></script>
+	</body>
+</html>
+
+<script type="text/x-template" id="modal-window">
+<transition name="modal">
+    <div class="modal-mask">
+        <div class="modal-wrapper">
+            <div class="modal-container">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">{{ header }}</h5>
+                            <button type="button" class="close"
+                            data-dismiss="modal" aria-label="Close"
+                            @click="$emit('close')">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <pre v-if='content.type == "text"'>{{ content.data }}</pre>
+                            <img v-else-if='content.type == "image"'
+                            v-bind:src='content.data'/>
+                            <div v-else-if='content.type == "confirm"'
+                            class='row justify-content-center align-items-center'>
+                                <button class='btn btn-danger'
+                                v-on:click='$emit("confirm")'>
+                                    Yes
+                                </button>
+                                <button class='btn btn-light'
+                                v-on:click='$emit("close")'>
+                                    No
+                                </button>
+                            </div>
+                            <div v-else>{{ body }}</div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type='button' class='btn btn-secondary'
+                            data-dismiss='modal' v-on:click='$emit("close")'>
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</transition>
+</script>
+<!-- vim: set foldmethod=indent foldlevel=4: -->
