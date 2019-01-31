@@ -1,3 +1,12 @@
 [submodule "css/bootstrap"]
 	path = css/bootstrap
 	url = https://github.com/twbs/bootstrap.git
+[submodule "js/vue"]
+	path = js/vue
+	url = https://github.com/vuejs/vue.git
+[submodule "js/axios"]
+	path = js/axios
+	url = https://github.com/axios/axios.git
+[submodule "js/moment"]
+	path = js/moment
+	url = https://github.com/moment/moment.git
