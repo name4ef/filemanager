@@ -10,3 +10,6 @@
 [submodule "js/moment"]
 	path = js/moment
 	url = https://github.com/moment/moment.git
+[submodule "chromephp"]
+	path = chromephp
+	url = https://github.com/ccampbell/chromephp.git

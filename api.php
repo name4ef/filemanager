@@ -1,4 +1,6 @@
 <?php
+include 'chromephp/ChromePhp.php';
+
 $data_dir = 'data';
 
 class FileSystem {
@@ -34,9 +36,17 @@ class FileSystem {
     public function putFile($to) {
         $uploadfile = $to . basename($_FILES['file']['name']);
         if (is_file($uploadfile)) {
+            ChromePhp::warn('file already exists');
             return false;
         }
-        move_uploaded_file($_FILES['file']['tmp_name'], $uploadfile);
+        // TODO error handling
+        // http://php.net/manual/ru/features.file-upload.errors.php
+        if ($_FILES['file']['error'] == UPLOAD_ERR_OK) {
+            move_uploaded_file($_FILES['file']['tmp_name'], $uploadfile);
+        } else {
+            ChromePhp::warn($_FILES['file']);
+            return false;
+        }
         return true;
     }
 
