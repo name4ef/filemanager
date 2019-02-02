@@ -2,7 +2,7 @@ new Vue({
     el: '#filemanager',
     data: {
         files: [],
-        file: '',
+        file: null,
         modal: {
             show: false,
             header: '',
@@ -12,19 +12,25 @@ new Vue({
                 data: null,
             }
         },
-        //TODO Use not object. May array or some like this
-        classObject: {
-            'input-group-text': true,
-            'btn-info': false,
-            'btn-success': false,
-            'btn-warning': false,
-            'btn-danger': false,
-        },
         selectedFileName: 'Choose file',
         uploadButtonIsDisabled: true,
+        fileUploaded: false,
+        hasError: false,
+        error: {}
     },
     created: function () {
         this.getFileList();
+    },
+    computed: {
+        classObject: function() {
+            return {
+                'input-group-text': !this.hasError && !this.fileUploaded && !this.file,
+                'btn-info': !this.hasError && this.file,
+                'btn-success': !this.hasError && this.fileUploaded,
+                'btn-warning': this.hasError && this.error.type == 'upload',
+                'btn-danger': this.hasError && this.error.type == 'network'
+            }
+        }
     },
     methods: {
         viewContent: function(file) {
@@ -64,19 +70,17 @@ new Vue({
             });
         },
         onFileChange: function(e) {
+            this.fileUploaded = false;
+            this.hasError = false;
             var files = e.target.files || e.dataTransfer.files;
             if (!files.length)
                 return;
             this.file = files[0];
             this.selectedFileName = this.file.name;
-            this.classObject['input-group-text'] = false;
-            this.classObject['btn-info'] = true;
-            this.classObject['btn-success'] = false;
-            this.classObject['btn-warning'] = false;
-            this.classObject['btn-danger'] = false;
             this.uploadButtonIsDisabled = false;
         },
         submitFile: function() {
+            this.hasError = false;
             var vm = this;
             var formData = new FormData();
             formData.append('file', this.file);
@@ -89,26 +93,20 @@ new Vue({
             })
             .then(function(response) {
                 if (response.data == 'file uploaded') {
-                    vm.classObject['btn-info'] = false;
-                    vm.classObject['btn-success'] = true;
-                    vm.classObject['btn-warning'] = false;
-                    vm.classObject['btn-danger'] = false;
+                    vm.fileUploaded = true;
+                    vm.file = null;
                     vm.selectedFileName = 'Choose file';
                     vm.uploadButtonIsDisabled = true;
                     vm.getFileList();
                 } else if (response.data == 'error') {
-                    vm.classObject['btn-info'] = false;
-                    vm.classObject['btn-success'] = false;
-                    vm.classObject['btn-warning'] = true;
-                    vm.classObject['btn-danger'] = false;
+                    vm.hasError = true;
+                    vm.error.type = 'upload';
                 }
             })
             .catch(function(error) {
                 console.error('Error API. ' + error);
-                vm.classObject['btn-info'] = false;
-                vm.classObject['btn-success'] = false;
-                vm.classObject['btn-warning'] = false;
-                vm.classObject['btn-danger'] = true;
+                vm.hasError = true;
+                vm.error.type = 'network';
             });
         },
         getFile: function(name) {
