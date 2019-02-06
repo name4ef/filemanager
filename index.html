@@ -3,78 +3,81 @@
 	<head>
 		<meta charset='utf-8'>
 		<meta name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no'>
+        <title>filemanager</title>
 		<script type='text/javascript' src='js/vue.js'></script>
 		<script type='text/javascript' src='js/moment.js'></script>
 		<script type='text/javascript' src='js/axios.js'></script>
 		<link rel='stylesheet' href='css/bootstrap.css' />
 		<link rel='stylesheet' href='css/style.css' />
 	</head>
-	<body>
-		<div class="container-fluid">
-			<div class="row justify-content-center align-items-center">
-				<div class="col-9">
-					<div id='filemanager' class='border'>
-						<table class='table table-borderless'>
-							<thead class='thead'>
-								<tr>
-									<th>Name</th>
-                                    <th class='d-none d-lg-table-cell'>Size</th>
-									<th class='d-none d-xl-table-cell'>Modify time</th>
-									<th></th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr v-for="f in files">
-									<td v-if='f.type == "text"'
-                                        v-on:click='viewContent(f)'
-                                        class='table-info'>
-										{{ f.name }}
-									</td>
-									<td v-else-if='f.type == "image"'
-                                        v-on:click='viewContent(f)'
-                                        class='table-warning'>
-										{{ f.name }}
-									</td>
-									<td v-else>{{ f.name }}</td>
-                                    <td class='d-none d-lg-table-cell'>
-                                        {{ f.size | formatSize }}
-                                    </td>
-									<td class='d-none d-xl-table-cell'>
-                                        {{ f.mtime | formatDate }}
-                                    </td>
-									<td>
-										<input type='button' value='X'
-                                        v-on:click='confirm(f.name)'
-                                        class='btn btn-sm btn-outline-danger'/>
-									</td>
-								</tr>
-							</tbody>
-						</table>
-						<div class="input-group">
-							<div class="input-group-prepend">
-                                <button class='btn'
-                                    v-bind:class='classObject'
-                                    v-bind:disabled='uploadButtonIsDisabled'
-                                    v-on:click='submitFile'>
-                                    Upload
-                                </button>
-							</div>
-							<div class="custom-file">
-								<input type="file" v-on:change='onFileChange'
-                                class="custom-file-input"/>
-                                <label class="custom-file-label">
-                                    {{ selectedFileName }}
-                                </label>
-							</div>
-						</div>
-						<modal v-if='modal.show'
-                        v-on:close='modal.show = false'
-                        v-on:confirm='removeFile(modal.content.data); modal.show = false'
-                        v-bind='modal'></modal>
-					</div>
-				</div>
-			</div>
-		</div>
+	<body class='py-4'>
+		<div class="container">
+
+            <div class="row mb-3">
+                <div id="filemanager" class="col-12">
+                    <table class="table table-borderless">
+                        <thead class="thead">
+                            <tr>
+                                <th class="">Name</th>
+                                <th class="d-none d-lg-table-cell">Size</th>
+                                <th class="d-none d-xl-table-cell">Modify time</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="f in files">
+                                <td v-if='f.type == "text"'
+                                    v-on:click='viewContent(f)'
+                                    class='table-info'>
+                                    {{ f.name }}
+                                </td>
+                                <td v-else-if='f.type == "image"'
+                                    v-on:click='viewContent(f)'
+                                    class='table-warning'>
+                                    {{ f.name }}
+                                </td>
+                                <td v-else>{{ f.name }}</td>
+                                <td class='d-none d-lg-table-cell'>
+                                    {{ f.size | formatSize }}
+                                </td>
+                                <td class='d-none d-xl-table-cell'>
+                                    {{ f.mtime | formatDate }}
+                                </td>
+                                <td>
+                                    <input type='button' value='X'
+                                    v-on:click='confirm(f.name)'
+                                    class='btn btn-sm btn-outline-danger'/>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <button class='btn'
+                             v-bind:class='classObject'
+                             v-bind:disabled='uploadButtonIsDisabled'
+                             v-on:click='submitFile'>
+                                Upload
+                            </button>
+                        </div>
+                        <div class="custom-file">
+                            <input type="file" v-on:change='onFileChange'
+                            class="custom-file-input"/>
+                            <label class="custom-file-label">
+                                {{ selectedFileName }}
+                            </label>
+                        </div>
+                    </div>
+
+                    <modal v-if='modal.show'
+                    v-on:close='modal.show = false'
+                    v-on:confirm='removeFile(modal.content.data); modal.show = false'
+                    v-bind='modal'></modal>
+                </div>
+            </div>
+
+        </div><!-- /container -->
 		<script type='text/javascript' src='js/app.js'></script>
 	</body>
 </html>
