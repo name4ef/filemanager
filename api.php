@@ -35,7 +35,8 @@ class FileSystem {
 
     public function putFile($to) {
         $uploadfile = $to . basename($_FILES['file']['name']);
-        if (is_file($uploadfile)) {
+        $uploadfile = str_replace('+', '', $uploadfile);
+        if (file_exists($uploadfile)) {
             ChromePhp::warn('file already exists');
             return false;
         }
